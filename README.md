@@ -126,6 +126,25 @@ service avahi-daemon restart
 journalctl -u avahi-daemon -n 10
 ```
 
+## Add monitoring for WiFi drops and auto-reboot
+
+Download the pingtest tool:
+
+```
+cd /opt
+# replace arm64 with arm in the below commands if using Pi Lite 32 bit OS
+wget https://github.com/rglonek/pingtest/releases/download/latest/pingtest.linux.arm64
+mv pingtest.linux.arm64 pingtest
+chmod 755 pingtest
+```
+
+Setup crontab (replace 192.168.0.1 with your router IP you wish to ping against):
+
+```
+echo '* * * * *  root  /opt/pingtest -host 192.168.0.1 -interval 14s -number 4 -privileged -threshold 100 || /usr/sbin/reboot' >> /etc/crontab
+service cron restart
+```
+
 ## Follow the below to overlayroot
 
 This will essentially make the filesystem read only and store changes in RAM only
